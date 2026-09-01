@@ -43,6 +43,7 @@
                             <a th:href="@{/pagamentosadmin/form(id=${pagamento.id})}"
                                class="btn btn-warning btn-sm">Editar</a>
                             <form th:action="@{/pagamentosadmin/delete/{id}(id=${pagamento.id})}" method="post" class="m-0">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <button type="submit" class="btn btn-danger btn-sm w-100"
                                         onclick="return confirm('Deseja realmente excluir este pagamento?')">Excluir</button>
                             </form>
