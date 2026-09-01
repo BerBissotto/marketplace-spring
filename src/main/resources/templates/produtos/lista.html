@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Produtos administrativos')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container-fluid flex-grow-1 py-5 px-lg-5">
+    <section class="page-card p-3 p-md-4" aria-labelledby="titulo-lista-produtos">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+            <div>
+                <h1 id="titulo-lista-produtos" class="h2 fw-bold mb-1">Produtos</h1>
+                <p class="text-muted mb-0">Cadastre, edite e acompanhe o estoque.</p>
+            </div>
+            <a th:href="@{/produtosadmin/form}" class="btn btn-primary">Novo produto</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <caption class="visually-hidden">Lista de produtos cadastrados</caption>
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Imagem</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col" class="text-center">Estoque</th>
+                    <th scope="col" class="text-end">Preço</th>
+                    <th scope="col" class="text-end">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="produto : ${produtos}">
+                    <td th:text="${produto.id}">1</td>
+                    <td>
+                        <img th:src="${!#lists.isEmpty(produto.imagens)} ? @{/imagem/{id}(id=${produto.imagens[0].id})} : @{/imagens/180px.png}"
+                             th:alt="${produto.nome}" class="rounded admin-table-image"
+                             loading="lazy" decoding="async">
+                    </td>
+                    <td>
+                        <span class="fw-semibold" th:text="${produto.nome}">Produto</span>
+                        <small class="d-block text-muted text-truncate" style="max-width: 280px;"
+                               th:text="${produto.descricao}">Descrição</small>
+                    </td>
+                    <td th:text="${produto.categoria}">Categoria</td>
+                    <td class="text-center" th:text="${produto.quantidade}">0</td>
+                    <td class="text-end text-nowrap"
+                        th:text="'R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 2)}">R$ 0,00</td>
+                    <td class="text-end table-action-group">
+                        <div class="d-inline-flex flex-column flex-md-row gap-2">
+                            <a th:href="@{/produtosadmin/editar/{id}(id=${produto.id})}"
+                               class="btn btn-warning btn-sm">Editar</a>
+                            <form th:action="@{/produtosadmin/deletar/{id}(id=${produto.id})}" method="post" class="m-0">
+                                <button type="submit" class="btn btn-danger btn-sm w-100"
+                                        onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(produtos)}">
+                    <td colspan="7" class="empty-state">Nenhum produto cadastrado.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

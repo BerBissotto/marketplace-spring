@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Administração')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <section class="page-card p-4 p-md-5 mx-auto" style="max-width: 760px;" aria-labelledby="titulo-admin">
+        <div class="text-center mb-4">
+            <h1 id="titulo-admin" class="h2 fw-bold">Painel de administração</h1>
+            <p class="text-muted mb-0">Escolha a área que deseja gerenciar.</p>
+        </div>
+
+        <nav class="d-grid gap-3" aria-label="Áreas administrativas">
+            <a th:href="@{/produtosadmin}" class="btn btn-outline-primary btn-lg">Gerenciar produtos</a>
+            <a th:href="@{/pedidosadmin/lista}" class="btn btn-outline-primary btn-lg">Gerenciar pedidos</a>
+            <a th:href="@{/usuariosadmin}" class="btn btn-outline-primary btn-lg">Gerenciar usuários</a>
+            <a th:href="@{/pagamentosadmin/lista}" class="btn btn-outline-primary btn-lg">Gerenciar pagamentos</a>
+        </nav>
+    </section>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Carrinho')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <div class="mb-4">
+        <h1 class="h2 fw-bold mb-1">Seu carrinho</h1>
+        <p class="text-muted mb-0">Revise os produtos e escolha a entrega.</p>
+    </div>
+
+    <div th:if="${mensagem}" class="alert alert-success" role="status" th:text="${mensagem}"></div>
+    <div th:if="${erro}" class="alert alert-danger" role="alert" th:text="${erro}"></div>
+
+    <div class="row g-4 align-items-start">
+        <section class="col-lg-8" aria-labelledby="titulo-itens">
+            <div class="checkout-card p-3 p-md-4">
+                <h2 id="titulo-itens" class="h5 fw-bold mb-4">Itens do pedido</h2>
+
+                <article th:each="entry : ${produtosQuantidades.entrySet()}"
+                         class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 border-bottom pb-4 mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <img th:src="${!#lists.isEmpty(entry.key.imagens)} ? @{/imagem/{id}(id=${entry.key.imagens[0].id})} : @{/imagens/180px.png}"
+                             class="rounded cart-product-image" th:alt="${entry.key.nome}"
+                             loading="lazy" decoding="async">
+                        <div>
+                            <h3 class="h5 mb-1" th:text="${entry.key.nome}">Produto</h3>
+                            <p class="small text-muted mb-1" th:text="'Código: ' + ${entry.key.id}">Código</p>
+                            <p class="text-success fw-bold mb-0"
+                               th:text="'R$ ' + ${#numbers.formatDecimal(entry.key.preco, 1, 2)}">R$ 0,00</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-end gap-2">
+                        <form th:action="@{/carrinho/atualizar}" method="post" class="d-flex align-items-end gap-2">
+                            <input type="hidden" name="produtoId" th:value="${entry.key.id}">
+                            <div>
+                                <label class="form-label small" th:for="'quantidade-' + ${entry.key.id}">Quantidade</label>
+                                <input type="number" name="quantidade" class="form-control" min="1"
+                                       th:id="'quantidade-' + ${entry.key.id}" th:value="${entry.value}" style="width: 90px;">
+                            </div>
+                            <button type="submit" class="btn btn-outline-primary">Atualizar</button>
+                        </form>
+                        <form th:action="@{/carrinho/remover}" method="post" class="m-0">
+                            <input type="hidden" name="produtoId" th:value="${entry.key.id}">
+                            <button type="submit" class="btn btn-outline-danger w-100">Remover</button>
+                        </form>
+                    </div>
+                </article>
+
+                <div th:if="${#lists.isEmpty(pedido.produtos)}" class="empty-state">
+                    <h3 class="h5">Seu carrinho está vazio</h3>
+                    <p>Adicione produtos para continuar.</p>
+                    <a th:href="@{/produtos}" class="btn btn-primary">Ver produtos</a>
+                </div>
+            </div>
+        </section>
+
+        <aside class="col-lg-4" aria-labelledby="titulo-resumo">
+            <div class="checkout-card p-4 sticky-lg-top" style="top: 1rem;">
+                <h2 id="titulo-resumo" class="h5 fw-bold mb-4">Resumo do pedido</h2>
+
+                <form th:action="@{/carrinho/finalizar}" method="post">
+                    <div class="mb-4">
+                        <label for="cep" class="form-label">CEP de entrega</label>
+                        <input type="text" id="cep" name="cep" class="form-control"
+                               th:value="${pedido.usuario != null && pedido.usuario.endereco != null ? pedido.usuario.endereco.cep : ''}"
+                               placeholder="CEP não cadastrado" readonly>
+                    </div>
+
+                    <fieldset class="mb-4">
+                        <legend class="h6">Opções de frete</legend>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="frete" id="freteEconomico"
+                                   value="economico" th:checked="${pedido.tipoFrete == 'economico'}" required>
+                            <label class="form-check-label d-flex justify-content-between" for="freteEconomico">
+                                <span>Econômico</span><span>R$ 10,00</span>
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="frete" id="fretePadrao"
+                                   value="padrao" th:checked="${pedido.tipoFrete == 'padrao'}">
+                            <label class="form-check-label d-flex justify-content-between" for="fretePadrao">
+                                <span>Padrão</span><span>R$ 20,00</span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="frete" id="freteExpresso"
+                                   value="expresso" th:checked="${pedido.tipoFrete == 'expresso'}">
+                            <label class="form-check-label d-flex justify-content-between" for="freteExpresso">
+                                <span>Expresso</span><span>R$ 25,00</span>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <div class="mb-4">
+                        <label for="embalagem" class="form-label">Embalagem</label>
+                        <select class="form-select" id="embalagem" name="embalagem" required>
+                            <option value="semembalagem" th:selected="${pedido.tipoEmbalagem == 'semembalagem'}">Sem embalagem — grátis</option>
+                            <option value="basica" th:selected="${pedido.tipoEmbalagem == 'basica'}">Básica — R$ 1,50</option>
+                            <option value="presente" th:selected="${pedido.tipoEmbalagem == 'presente'}">Presente — R$ 10,00</option>
+                            <option value="comemorativa" th:selected="${pedido.tipoEmbalagem == 'comemorativa'}">Comemorativa — R$ 12,00</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal</span>
+                        <span th:text="'R$ ' + ${#numbers.formatDecimal(pedido.calcularValorProdutos(), 1, 2)}">R$ 0,00</span>
+                    </div>
+                    <p class="small text-muted">Frete, embalagem e desconto serão confirmados na próxima etapa.</p>
+                    <hr>
+                    <button type="submit" class="btn btn-success w-100 btn-lg"
+                            th:disabled="${#lists.isEmpty(pedido.produtos)}">Finalizar compra</button>
+                </form>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

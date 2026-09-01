@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Finalizar pagamento')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <div class="mb-4">
+        <h1 class="h2 fw-bold mb-1">Finalizar pagamento</h1>
+        <p class="text-muted mb-0">Escolha uma forma de pagamento e confirme o total.</p>
+    </div>
+
+    <form th:action="@{/pagamentos/finalizar}" method="post" class="row g-4 align-items-start">
+        <input type="hidden" name="pedidoId" th:value="${pedido.id}">
+
+        <section class="col-lg-8" aria-labelledby="titulo-formas-pagamento">
+            <fieldset class="checkout-card p-4">
+                <legend id="titulo-formas-pagamento" class="h5 fw-bold mb-4">Forma de pagamento</legend>
+
+                <div class="vstack gap-3">
+                    <label class="payment-option border rounded p-3 d-flex align-items-center gap-3" for="paypal">
+                        <input class="form-check-input mt-0" type="radio" name="formaPagamento"
+                               id="paypal" value="paypal" required>
+                        <span class="badge text-bg-primary fs-6">PayPal</span>
+                        <span>Pagamento pela conta PayPal</span>
+                    </label>
+
+                    <label class="payment-option border rounded p-3 d-flex align-items-center gap-3" for="pix">
+                        <input class="form-check-input mt-0" type="radio" name="formaPagamento"
+                               id="pix" value="pix">
+                        <span class="badge text-bg-success fs-6">Pix</span>
+                        <span>Transferência instantânea</span>
+                    </label>
+
+                    <label class="payment-option border rounded p-3 d-flex align-items-center gap-3" for="boleto">
+                        <input class="form-check-input mt-0" type="radio" name="formaPagamento"
+                               id="boleto" value="boleto">
+                        <span class="badge text-bg-secondary fs-6">Boleto</span>
+                        <span>Vencimento em até três dias</span>
+                    </label>
+                </div>
+            </fieldset>
+        </section>
+
+        <aside class="col-lg-4" aria-labelledby="titulo-resumo-pagamento">
+            <div class="checkout-card p-4 sticky-lg-top" style="top: 1rem;">
+                <h2 id="titulo-resumo-pagamento" class="h5 fw-bold mb-4">Resumo do pedido</h2>
+
+                <dl class="row mb-0">
+                    <dt class="col-6 fw-normal">Subtotal</dt>
+                    <dd class="col-6 text-end" th:text="'R$ ' + ${#numbers.formatDecimal(subtotal, 1, 2)}">R$ 0,00</dd>
+
+                    <dt class="col-6 fw-normal">Frete</dt>
+                    <dd class="col-6 text-end" th:text="'R$ ' + ${#numbers.formatDecimal(frete, 1, 2)}">R$ 0,00</dd>
+
+                    <dt class="col-6 fw-normal">Embalagem</dt>
+                    <dd class="col-6 text-end" th:text="'R$ ' + ${#numbers.formatDecimal(embalagem, 1, 2)}">R$ 0,00</dd>
+
+                    <dt class="col-6 fw-normal text-danger" th:if="${desconto > 0}">Desconto</dt>
+                    <dd class="col-6 text-end text-danger" th:if="${desconto > 0}"
+                        th:text="'- R$ ' + ${#numbers.formatDecimal(desconto, 1, 2)}">- R$ 0,00</dd>
+                </dl>
+
+                <hr>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <strong>Total</strong>
+                    <strong class="text-success fs-4"
+                            th:text="'R$ ' + ${#numbers.formatDecimal(total, 1, 2)}">R$ 0,00</strong>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg w-100">Pagar agora</button>
+                <a th:href="@{/pedidos}" class="btn btn-link w-100 mt-2">Voltar ao carrinho</a>
+            </div>
+        </aside>
+    </form>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

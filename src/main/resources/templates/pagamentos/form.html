@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Cadastro de pagamento')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <section class="page-card p-4 p-md-5" aria-labelledby="titulo-pagamento-admin">
+        <div class="mb-4">
+            <h1 id="titulo-pagamento-admin" class="h2 fw-bold mb-1"
+                th:text="${pagamento.id != null} ? 'Editar pagamento' : 'Novo pagamento'">Novo pagamento</h1>
+            <p class="text-muted mb-0">Informe o método, o valor e o pedido relacionado.</p>
+        </div>
+
+        <form th:action="@{/pagamentosadmin/save}" th:object="${pagamento}" method="post" class="row g-3">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="col-md-4">
+                <label for="metodoPagamento" class="form-label">Método de pagamento</label>
+                <select id="metodoPagamento" th:field="*{metodoPagamento}" class="form-select" required>
+                    <option value="">Selecione</option>
+                    <option value="pix">Pix</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="boleto">Boleto</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label for="valor" class="form-label">Valor (R$)</label>
+                <input type="number" id="valor" step="0.01" min="0.01"
+                       th:field="*{valor}" class="form-control" required>
+            </div>
+
+            <div class="col-md-4">
+                <label for="pedidoId" class="form-label">ID do pedido</label>
+                <input type="number" id="pedidoId" name="pedido.id" min="1" class="form-control"
+                       th:value="${pagamento.pedido != null ? pagamento.pedido.id : ''}" required>
+            </div>
+
+            <div class="col-12 d-flex flex-column flex-sm-row gap-2 mt-4">
+                <button type="submit" class="btn btn-success">Salvar pagamento</button>
+                <a th:href="@{/pagamentosadmin/lista}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

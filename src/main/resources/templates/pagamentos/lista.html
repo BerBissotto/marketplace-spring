@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Pagamentos administrativos')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <section class="page-card p-3 p-md-4" aria-labelledby="titulo-lista-pagamentos">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+            <div>
+                <h1 id="titulo-lista-pagamentos" class="h2 fw-bold mb-1">Pagamentos</h1>
+                <p class="text-muted mb-0">Consulte os pagamentos processados.</p>
+            </div>
+            <a th:href="@{/pagamentosadmin/form}" class="btn btn-primary">Novo pagamento</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle mb-0">
+                <caption class="visually-hidden">Lista de pagamentos cadastrados</caption>
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Método</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Pedido</th>
+                    <th scope="col" class="text-end">Valor</th>
+                    <th scope="col" class="text-end">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pagamento : ${pagamentos}">
+                    <td th:text="${pagamento.id}">1</td>
+                    <td class="text-capitalize" th:text="${pagamento.metodoPagamento}">Pix</td>
+                    <td class="text-nowrap"
+                        th:text="${#temporals.format(pagamento.dataPagamento, 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+                    <td th:text="${pagamento.pedido != null ? pagamento.pedido.id : '-'}">-</td>
+                    <td class="text-end text-nowrap"
+                        th:text="'R$ ' + ${#numbers.formatDecimal(pagamento.valor, 1, 2)}">R$ 0,00</td>
+                    <td class="text-end table-action-group">
+                        <div class="d-inline-flex flex-column flex-sm-row gap-2">
+                            <a th:href="@{/pagamentosadmin/form(id=${pagamento.id})}"
+                               class="btn btn-warning btn-sm">Editar</a>
+                            <form th:action="@{/pagamentosadmin/delete/{id}(id=${pagamento.id})}" method="post" class="m-0">
+                                <button type="submit" class="btn btn-danger btn-sm w-100"
+                                        onclick="return confirm('Deseja realmente excluir este pagamento?')">Excluir</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pagamentos)}">
+                    <td colspan="6" class="empty-state">Nenhum pagamento cadastrado.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

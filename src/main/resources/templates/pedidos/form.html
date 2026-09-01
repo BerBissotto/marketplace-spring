@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Cadastro de pedido')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <section class="page-card p-4 p-md-5" aria-labelledby="titulo-pedido">
+        <div class="mb-4">
+            <h1 id="titulo-pedido" class="h2 fw-bold mb-1"
+                th:text="${pedido.id != null} ? 'Editar pedido' : 'Novo pedido'">Novo pedido</h1>
+            <p class="text-muted mb-0">Defina os produtos e as condições comerciais do pedido.</p>
+        </div>
+
+        <form th:action="@{/pedidosadmin}" th:object="${pedido}" method="post" class="row g-3">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="col-md-4">
+                <label for="dataPedido" class="form-label">Data do pedido</label>
+                <input type="date" id="dataPedido" th:field="*{dataPedido}" class="form-control" required>
+            </div>
+
+            <div class="col-md-4">
+                <label for="valorTotal" class="form-label">Valor total</label>
+                <input type="number" id="valorTotal" step="0.01" min="0"
+                       th:field="*{valorTotal}" class="form-control" readonly>
+                <div class="form-text">Calculado automaticamente ao salvar.</div>
+            </div>
+
+            <div class="col-md-4">
+                <label for="usuarioId" class="form-label">ID do usuário</label>
+                <input type="number" id="usuarioId" name="usuario.id" class="form-control" min="1"
+                       th:value="${pedido.usuario != null ? pedido.usuario.id : ''}" required>
+            </div>
+
+            <div class="col-12">
+                <label for="produtosPedido" class="form-label">Produtos</label>
+                <select id="produtosPedido" name="produtos" multiple class="form-select" size="7" required>
+                    <option th:each="produto : ${produtos}" th:value="${produto.id}"
+                            th:text="${produto.nome} + ' — R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 2)}"
+                            th:selected="${pedido.produtos != null && #lists.contains(pedido.produtos, produto)}">Produto</option>
+                </select>
+                <div class="form-text">Use Ctrl (Windows/Linux) ou Command (macOS) para selecionar vários produtos.</div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="tipoFrete" class="form-label">Tipo de frete</label>
+                <select id="tipoFrete" th:field="*{tipoFrete}" class="form-select">
+                    <option value="">Selecione</option>
+                    <option value="economico">Econômico — R$ 10,00</option>
+                    <option value="padrao">Padrão — R$ 20,00</option>
+                    <option value="expresso">Expresso — R$ 25,00</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="tipoEmbalagem" class="form-label">Tipo de embalagem</label>
+                <select id="tipoEmbalagem" th:field="*{tipoEmbalagem}" class="form-select">
+                    <option value="">Selecione</option>
+                    <option value="semembalagem">Sem embalagem</option>
+                    <option value="basica">Básica</option>
+                    <option value="presente">Presente</option>
+                    <option value="comemorativa">Comemorativa</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label for="percentualDesconto" class="form-label">Desconto (%)</label>
+                <input type="number" id="percentualDesconto" step="0.01" min="0" max="100"
+                       th:field="*{percentualDesconto}" class="form-control">
+            </div>
+
+            <div class="col-12 d-flex flex-column flex-sm-row gap-2 mt-4">
+                <button type="submit" class="btn btn-success">Salvar pedido</button>
+                <a th:href="@{/pedidosadmin/lista}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

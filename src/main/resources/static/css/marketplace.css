@@ -1,0 +1,393 @@
+:root {
+    --marketplace-surface: #ffffff;
+    --marketplace-border: #dee2e6;
+    --marketplace-skeleton: #e9ecef;
+    --marketplace-skeleton-highlight: #f8f9fa;
+    --motion-ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+    --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+    --motion-duration-fast: 160ms;
+    --motion-duration-base: 240ms;
+    --motion-duration-page: 320ms;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+/* Skeleton global: aparece somente enquanto a estrutura inicial da página é preparada. */
+html.motion-enabled:not(.motion-ready) {
+    overflow: hidden;
+}
+
+html.motion-enabled:not(.motion-ready) body > * {
+    visibility: hidden;
+}
+
+html.motion-enabled body::before,
+html.motion-enabled body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+html.motion-enabled body::before {
+    background:
+        linear-gradient(#212529, #212529) 0 0 / 100% 66px no-repeat,
+        linear-gradient(var(--marketplace-skeleton), var(--marketplace-skeleton)) 5vw 106px / min(46vw, 460px) 34px no-repeat,
+        linear-gradient(var(--marketplace-skeleton), var(--marketplace-skeleton)) 5vw 158px / 90vw 220px no-repeat,
+        linear-gradient(var(--marketplace-skeleton), var(--marketplace-skeleton)) 5vw 402px / 28vw 210px no-repeat,
+        linear-gradient(var(--marketplace-skeleton), var(--marketplace-skeleton)) 36vw 402px / 28vw 210px no-repeat,
+        linear-gradient(var(--marketplace-skeleton), var(--marketplace-skeleton)) 67vw 402px / 28vw 210px no-repeat,
+        #f8f9fa;
+    transition: opacity var(--motion-duration-fast) var(--motion-ease-exit),
+                visibility 0s linear var(--motion-duration-fast);
+}
+
+html.motion-enabled body::after {
+    right: auto;
+    width: 42%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.68),
+        transparent
+    );
+    transform: translateX(-110%);
+}
+
+html.motion-enabled:not(.motion-ready) body::before,
+html.motion-enabled:not(.motion-ready) body::after {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+html.motion-enabled:not(.motion-ready) body::after {
+    animation: marketplace-page-skeleton 1.1s linear infinite;
+}
+
+main {
+    width: 100%;
+}
+
+.navbar-brand img {
+    object-fit: contain;
+}
+
+.page-card,
+.checkout-card {
+    background: var(--marketplace-surface);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 0.75rem;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.02),
+        0 1px 2px -1px rgba(0, 0, 0, 0.06),
+        0 0.25rem 1rem rgba(0, 0, 0, 0.05);
+}
+
+.hero-carousel img {
+    height: clamp(220px, 36vw, 480px);
+    object-fit: cover;
+}
+
+.product-card {
+    overflow: hidden;
+    transition: transform var(--motion-duration-base) var(--motion-ease-enter),
+                box-shadow var(--motion-duration-base) var(--motion-ease-enter);
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.product-card__image {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+}
+
+.product-detail__image {
+    width: 100%;
+    max-height: 520px;
+    object-fit: contain;
+}
+
+.thumbnail-image {
+    width: 88px;
+    height: 88px;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.admin-table-image {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+}
+
+.cart-product-image {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+}
+
+.payment-option {
+    cursor: pointer;
+    transition: border-color var(--motion-duration-fast) var(--motion-ease-enter),
+                background-color var(--motion-duration-fast) var(--motion-ease-enter),
+                box-shadow var(--motion-duration-fast) var(--motion-ease-enter);
+}
+
+.payment-option:hover {
+    border-color: var(--bs-primary) !important;
+    background-color: rgba(var(--bs-primary-rgb), 0.04);
+}
+
+.payment-option:has(input:checked) {
+    border-color: var(--bs-primary) !important;
+    background-color: rgba(var(--bs-primary-rgb), 0.07);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.12);
+}
+
+/* Entrada e saída de blocos principais. O JavaScript limita o efeito aos
+   grandes blocos da página para evitar animação excessiva em linhas e campos. */
+.motion-enabled .motion-target {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(3px);
+    transition: opacity var(--motion-duration-page) var(--motion-ease-enter),
+                transform var(--motion-duration-page) var(--motion-ease-enter),
+                filter var(--motion-duration-page) var(--motion-ease-enter);
+}
+
+.motion-enabled .motion-target.is-motion-visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+}
+
+.motion-enabled body.is-page-leaving main {
+    opacity: 0.72;
+    transform: translateY(-4px);
+    filter: blur(2px);
+    transition: opacity 140ms var(--motion-ease-exit),
+                transform 140ms var(--motion-ease-exit),
+                filter 140ms var(--motion-ease-exit);
+}
+
+/* Skeleton individual para imagens carregadas sob demanda. */
+img[data-motion-image] {
+    background-color: var(--marketplace-skeleton);
+    transition: opacity var(--motion-duration-base) var(--motion-ease-enter),
+                filter var(--motion-duration-base) var(--motion-ease-enter),
+                transform var(--motion-duration-fast) var(--motion-ease-enter);
+}
+
+img[data-motion-image]:not(.is-image-loaded) {
+    opacity: 0.38;
+    filter: blur(3px);
+    background-image: linear-gradient(
+        100deg,
+        var(--marketplace-skeleton) 20%,
+        var(--marketplace-skeleton-highlight) 40%,
+        var(--marketplace-skeleton) 60%
+    );
+    background-size: 220% 100%;
+    animation: marketplace-image-skeleton 1.1s linear infinite;
+}
+
+img[data-motion-image].is-image-loaded {
+    opacity: 1;
+    filter: blur(0);
+}
+
+img[data-motion-image].is-image-switching {
+    opacity: 0.4;
+    filter: blur(4px);
+    transform: scale(0.995);
+}
+
+img[data-motion-image].is-image-error {
+    opacity: 1;
+    filter: grayscale(1);
+}
+
+/* Progresso global de navegação e envio de formulários. */
+.app-progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 2100;
+    height: 3px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--motion-duration-fast) var(--motion-ease-exit);
+}
+
+.app-progress.is-active {
+    opacity: 1;
+}
+
+.app-progress__bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--bs-primary), var(--bs-info));
+    box-shadow: 0 0 0.75rem rgba(var(--bs-primary-rgb), 0.4);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 220ms var(--motion-ease-enter);
+}
+
+.btn {
+    transition: transform var(--motion-duration-fast) var(--motion-ease-enter),
+                opacity var(--motion-duration-fast) var(--motion-ease-enter),
+                box-shadow var(--motion-duration-fast) var(--motion-ease-enter);
+}
+
+.btn:not(:disabled):not(.disabled):active {
+    transform: scale(0.97);
+}
+
+.btn.is-loading {
+    cursor: wait;
+    opacity: 0.78;
+    pointer-events: none;
+}
+
+.button-loading-indicator {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.45rem;
+    vertical-align: -0.12em;
+    border: 0.14em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: marketplace-spinner 650ms linear infinite;
+}
+
+form[aria-busy="true"] :is(input, select, textarea) {
+    cursor: wait;
+}
+
+.form-control,
+.form-select,
+.form-check-input {
+    transition: border-color var(--motion-duration-fast) var(--motion-ease-enter),
+                box-shadow var(--motion-duration-fast) var(--motion-ease-enter),
+                opacity var(--motion-duration-fast) var(--motion-ease-enter);
+}
+
+.file-preview-region {
+    margin-top: 1rem;
+}
+
+.file-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 0.75rem;
+    max-width: 36rem;
+}
+
+.file-preview-grid img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.08),
+        0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.thumbnail-image {
+    transition: opacity var(--motion-duration-fast) var(--motion-ease-enter),
+                transform var(--motion-duration-fast) var(--motion-ease-enter),
+                box-shadow var(--motion-duration-fast) var(--motion-ease-enter);
+}
+
+button[aria-pressed="true"] .thumbnail-image {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 0.18rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.table > :not(caption) > * > * {
+    vertical-align: middle;
+}
+
+.empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: var(--bs-secondary-color);
+}
+
+@keyframes marketplace-page-skeleton {
+    from {
+        transform: translateX(-110%);
+    }
+    to {
+        transform: translateX(250%);
+    }
+}
+
+@keyframes marketplace-image-skeleton {
+    from {
+        background-position: 120% 0;
+    }
+    to {
+        background-position: -120% 0;
+    }
+}
+
+@keyframes marketplace-spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .motion-enabled .motion-target,
+    .motion-enabled .motion-target.is-motion-visible,
+    .motion-enabled body.is-page-leaving main,
+    img[data-motion-image],
+    img[data-motion-image]:not(.is-image-loaded),
+    img[data-motion-image].is-image-switching {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .product-card__image {
+        height: 180px;
+    }
+
+    .table-action-group {
+        min-width: 8rem;
+    }
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Produtos')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <div class="mb-4">
+        <h1 class="h2 fw-bold mb-1">Produtos</h1>
+        <p class="text-muted mb-0">Pesquise e encontre o produto ideal.</p>
+    </div>
+
+    <section class="page-card p-3 p-md-4 mb-4" aria-labelledby="titulo-filtros">
+        <h2 id="titulo-filtros" class="h5 mb-3">Filtros</h2>
+        <form class="row g-3 align-items-end" th:action="@{/produtos}" method="get">
+            <div class="col-md-6 col-lg-4">
+                <label for="filtroNome" class="form-label">Nome do produto</label>
+                <input type="search" id="filtroNome" name="nome" class="form-control"
+                       placeholder="Digite o nome" th:value="${nome}">
+            </div>
+
+            <div class="col-6 col-md-3 col-lg-2">
+                <label for="valorMin" class="form-label">Preço mínimo</label>
+                <input type="number" id="valorMin" name="valorMin" min="0" step="0.01"
+                       class="form-control" placeholder="0,00" th:value="${valorMin}">
+            </div>
+
+            <div class="col-6 col-md-3 col-lg-2">
+                <label for="valorMax" class="form-label">Preço máximo</label>
+                <input type="number" id="valorMax" name="valorMax" min="0" step="0.01"
+                       class="form-control" placeholder="1000,00" th:value="${valorMax}">
+            </div>
+
+            <div class="col-md-6 col-lg-2">
+                <label for="filtroCategoria" class="form-label">Categoria</label>
+                <input type="text" id="filtroCategoria" name="categoria" class="form-control"
+                       placeholder="Ex.: Eletrônicos" th:value="${categoria}">
+            </div>
+
+            <div class="col-md-6 col-lg-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">Filtrar</button>
+                <a th:href="@{/produtos}" class="btn btn-outline-secondary">Limpar</a>
+            </div>
+        </form>
+    </section>
+
+    <section aria-labelledby="titulo-resultados">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 id="titulo-resultados" class="h4 mb-0">Resultados</h2>
+            <span class="text-muted small" th:text="${pagina.totalElements} + ' produto(s)'">0 produtos</span>
+        </div>
+
+        <div class="row g-4" th:if="${!#lists.isEmpty(produtos)}">
+            <article th:each="produto : ${produtos}" class="col-6 col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm product-card">
+                    <a th:href="@{/produtos/{id}(id=${produto.id})}">
+                        <img th:src="${!#lists.isEmpty(produto.imagens)} ? @{/imagem/{id}(id=${produto.imagens[0].id})} : @{/imagens/300x300.png}"
+                             class="card-img-top product-card__image" th:alt="${produto.nome}"
+                             loading="lazy" decoding="async">
+                    </a>
+                    <div class="card-body d-flex flex-column">
+                        <p class="small text-uppercase text-muted mb-1" th:text="${produto.categoria}">Categoria</p>
+                        <h3 class="h5 card-title">
+                            <a th:href="@{/produtos/{id}(id=${produto.id})}"
+                               class="text-decoration-none text-body" th:text="${produto.nome}">Produto</a>
+                        </h3>
+                        <p class="text-success fw-bold fs-5 mt-auto"
+                           th:text="'R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 2)}">R$ 0,00</p>
+                        <form th:action="@{/carrinho/adicionar}" method="post" sec:authorize="isAuthenticated()">
+                            <input type="hidden" name="produtoId" th:value="${produto.id}">
+                            <button type="submit" class="btn btn-primary w-100"
+                                    th:disabled="${produto.quantidade <= 0}">Adicionar ao carrinho</button>
+                        </form>
+                        <a sec:authorize="!isAuthenticated()" th:href="@{/produtos/{id}(id=${produto.id})}"
+                           class="btn btn-outline-primary w-100">Ver detalhes</a>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div class="page-card empty-state" th:if="${#lists.isEmpty(produtos)}">
+            <h3 class="h5">Nenhum produto encontrado</h3>
+            <p class="mb-0">Tente remover ou alterar os filtros.</p>
+        </div>
+
+        <nav th:if="${pagina.totalPages > 1}" aria-label="Paginação de produtos" class="mt-5">
+            <ul class="pagination justify-content-center flex-wrap">
+                <li class="page-item" th:classappend="${pagina.first} ? 'disabled'">
+                    <a class="page-link" aria-label="Página anterior"
+                       th:href="@{/produtos(page=${pagina.number - 1}, nome=${nome}, valorMin=${valorMin}, valorMax=${valorMax}, categoria=${categoria})}">Anterior</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, pagina.totalPages - 1)}"
+                    th:classappend="${i == pagina.number} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/produtos(page=${i}, nome=${nome}, valorMin=${valorMin}, valorMax=${valorMax}, categoria=${categoria})}"
+                       th:text="${i + 1}" th:aria-label="'Página ' + ${i + 1}"
+                       th:aria-current="${i == pagina.number} ? 'page' : null">1</a>
+                </li>
+                <li class="page-item" th:classappend="${pagina.last} ? 'disabled'">
+                    <a class="page-link" aria-label="Próxima página"
+                       th:href="@{/produtos(page=${pagina.number + 1}, nome=${nome}, valorMin=${valorMin}, valorMax=${valorMax}, categoria=${categoria})}">Próxima</a>
+                </li>
+            </ul>
+        </nav>
+    </section>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

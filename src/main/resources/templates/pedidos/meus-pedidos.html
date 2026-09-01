@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Meus pedidos')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <div class="mb-4">
+        <h1 class="h2 fw-bold mb-1">Meus pedidos</h1>
+        <p class="text-muted mb-0">Histórico e situação das suas compras.</p>
+    </div>
+
+    <section class="vstack gap-4" aria-label="Histórico de pedidos">
+        <article class="card border-0 shadow-sm">
+            <header class="card-header d-flex flex-column flex-sm-row justify-content-between gap-2 py-3">
+                <div><strong>Pedido #123456</strong> <span class="text-muted">— 15/06/2025</span></div>
+                <span class="badge text-bg-warning align-self-start">Aguardando pagamento</span>
+            </header>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <section class="col-md-7" aria-labelledby="itens-123456">
+                        <h2 id="itens-123456" class="h5">Itens do pedido</h2>
+                        <div class="d-flex align-items-center gap-3">
+                            <img th:src="@{/imagens/180px.png}" class="rounded cart-product-image" alt="Produto do pedido"
+                                 loading="lazy" decoding="async">
+                            <div><h3 class="h6 mb-1">Produto de exemplo</h3><p class="mb-0">Quantidade: 1</p></div>
+                        </div>
+                    </section>
+                    <section class="col-md-5" aria-labelledby="resumo-123456">
+                        <h2 id="resumo-123456" class="h5">Resumo</h2>
+                        <dl class="row mb-0">
+                            <dt class="col-6">Subtotal</dt><dd class="col-6 text-end">R$ 289,90</dd>
+                            <dt class="col-6">Frete</dt><dd class="col-6 text-end">R$ 25,00</dd>
+                            <dt class="col-6">Total</dt><dd class="col-6 text-end fw-bold">R$ 314,90</dd>
+                        </dl>
+                    </section>
+                </div>
+            </div>
+        </article>
+
+        <article class="card border-0 shadow-sm">
+            <header class="card-header d-flex flex-column flex-sm-row justify-content-between gap-2 py-3">
+                <div><strong>Pedido #123457</strong> <span class="text-muted">— 10/06/2025</span></div>
+                <span class="badge text-bg-info align-self-start">Enviado</span>
+            </header>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <section class="col-md-7" aria-labelledby="itens-123457">
+                        <h2 id="itens-123457" class="h5">Itens do pedido</h2>
+                        <div class="d-flex align-items-center gap-3">
+                            <img th:src="@{/imagens/180px.png}" class="rounded cart-product-image" alt="Produto do pedido"
+                                 loading="lazy" decoding="async">
+                            <div><h3 class="h6 mb-1">Produto de exemplo</h3><p class="mb-0">Quantidade: 2</p></div>
+                        </div>
+                    </section>
+                    <section class="col-md-5" aria-labelledby="resumo-123457">
+                        <h2 id="resumo-123457" class="h5">Rastreamento</h2>
+                        <p class="mb-1"><strong>Código:</strong> BR123456789BR</p>
+                        <p class="mb-0"><strong>Status:</strong> Saiu para entrega</p>
+                    </section>
+                </div>
+            </div>
+        </article>
+
+        <article class="card border-0 shadow-sm">
+            <header class="card-header d-flex flex-column flex-sm-row justify-content-between gap-2 py-3">
+                <div><strong>Pedido #123458</strong> <span class="text-muted">— 01/06/2025</span></div>
+                <span class="badge text-bg-success align-self-start">Entregue</span>
+            </header>
+            <div class="card-body p-4">
+                <p class="mb-1"><strong>Pagamento:</strong> PayPal</p>
+                <p class="mb-1"><strong>Total:</strong> R$ 180,90</p>
+                <p class="mb-0"><strong>Entrega:</strong> concluída em 07/06/2025</p>
+            </div>
+        </article>
+    </section>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Fragmento de navegação</title>
+</head>
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark" aria-label="Navegação principal">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/}" aria-label="Marketplace - página inicial">
+            <img th:src="@{/imagens/loja.png}" alt="" width="34" height="34"
+                 loading="eager" decoding="async" fetchpriority="high" data-image-priority="high">
+            <span>Marketplace</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarContent" aria-controls="navbarContent"
+                aria-expanded="false" aria-label="Abrir menu de navegação">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Início</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/produtos}">Produtos</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/admin}">Administração</a>
+                </li>
+            </ul>
+
+            <div class="d-flex flex-column flex-lg-row gap-2">
+                <a sec:authorize="isAuthenticated()" th:href="@{/pedidos}" class="btn btn-outline-light">
+                    Carrinho
+                </a>
+                <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-light">
+                    Entrar
+                </a>
+                <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-outline-danger w-100">Sair</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

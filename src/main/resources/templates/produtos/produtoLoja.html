@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: head('Detalhes do produto')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <nav aria-label="Navegação estrutural" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Início</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/produtos}">Produtos</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${produto.nome}">Produto</li>
+        </ol>
+    </nav>
+
+    <article class="row g-4 g-lg-5 align-items-start">
+        <section class="col-lg-6" aria-label="Galeria do produto">
+            <figure class="page-card p-3 mb-0">
+                <img id="imagemPrincipal"
+                     th:src="${!#lists.isEmpty(produto.imagens)} ? @{/imagem/{id}(id=${produto.imagens[0].id})} : @{/imagens/300x300.png}"
+                     class="product-detail__image rounded" th:alt="${produto.nome}"
+                     loading="eager" decoding="async" fetchpriority="high" data-image-priority="high">
+            </figure>
+
+            <div class="d-flex flex-wrap gap-2 mt-3" th:if="${!#lists.isEmpty(produto.imagens)}">
+                <button th:each="imagem, iter : ${produto.imagens}" type="button"
+                        class="btn p-0 border-0 bg-transparent"
+                        th:aria-label="'Exibir imagem ' + ${iter.count} + ' de ' + ${produto.nome}"
+                        data-gallery-thumbnail>
+                    <img th:src="@{/imagem/{id}(id=${imagem.id})}" th:alt="${imagem.nome}"
+                         class="img-thumbnail thumbnail-image" loading="lazy" decoding="async">
+                </button>
+            </div>
+        </section>
+
+        <section class="col-lg-6" aria-labelledby="nome-produto">
+            <div class="page-card p-4 p-lg-5">
+                <p class="text-uppercase small text-muted mb-2" th:text="${produto.categoria}">Categoria</p>
+                <h1 id="nome-produto" class="display-6 fw-bold" th:text="${produto.nome}">Produto</h1>
+
+                <p class="mb-3">
+                    <span th:if="${produto.quantidade > 0}" class="badge text-bg-success"
+                          th:text="${produto.quantidade} + ' em estoque'">Disponível</span>
+                    <span th:if="${produto.quantidade <= 0}" class="badge text-bg-danger">Produto esgotado</span>
+                </p>
+
+                <p class="text-success fw-bold display-6 mb-4"
+                   th:text="'R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 2)}">R$ 0,00</p>
+
+                <h2 class="h5">Descrição</h2>
+                <p class="text-body-secondary" th:text="${produto.descricao ?: 'Sem descrição disponível.'}">
+                    Descrição do produto.
+                </p>
+
+                <form th:action="@{/carrinho/adicionar}" method="post" sec:authorize="isAuthenticated()" class="mt-4">
+                    <input type="hidden" name="produtoId" th:value="${produto.id}">
+                    <button type="submit" class="btn btn-success btn-lg w-100"
+                            th:disabled="${produto.quantidade <= 0}">Adicionar ao carrinho</button>
+                </form>
+
+                <a sec:authorize="!isAuthenticated()" th:href="@{/login}"
+                   class="btn btn-primary btn-lg w-100 mt-4">Entre para comprar</a>
+            </div>
+        </section>
+    </article>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

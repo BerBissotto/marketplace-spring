@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Cadastro de usuário')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<header>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+</header>
+
+<main class="container flex-grow-1 py-5">
+    <section class="page-card p-4 p-md-5" aria-labelledby="titulo-usuario">
+        <div class="mb-4">
+            <h1 id="titulo-usuario" class="h2 fw-bold mb-1"
+                th:text="${usuario.id != null} ? 'Editar usuário' : 'Novo usuário'">Novo usuário</h1>
+            <p class="text-muted mb-0">Gerencie os dados pessoais, o perfil de acesso e o endereço.</p>
+        </div>
+
+        <div th:if="${erro}" class="alert alert-danger" role="alert" th:text="${erro}"></div>
+
+        <form th:action="@{/usuariosadmin/salvar}" th:object="${usuario}" method="post" class="row g-3">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{endereco.id}">
+
+            <div class="col-md-6">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" id="nome" class="form-control" th:field="*{nome}"
+                       autocomplete="name" maxlength="120" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" id="email" class="form-control" th:field="*{email}"
+                       autocomplete="email" maxlength="160" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="telefone" class="form-label">Telefone</label>
+                <input type="tel" id="telefone" class="form-control" th:field="*{telefone}"
+                       autocomplete="tel" maxlength="20">
+            </div>
+
+            <div class="col-md-6">
+                <label for="cpf" class="form-label">CPF</label>
+                <input type="text" id="cpf" class="form-control" th:field="*{cpf}"
+                       inputmode="numeric" maxlength="14">
+            </div>
+
+            <div class="col-md-6">
+                <label for="role" class="form-label">Perfil de acesso</label>
+                <select id="role" class="form-select" th:field="*{role}" required>
+                    <option value="">Selecione</option>
+                    <option value="user">Usuário</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="senha" class="form-label"
+                       th:text="${usuario.id != null} ? 'Nova senha' : 'Senha'">Senha</label>
+                <input type="password" id="senha" name="senha" class="form-control"
+                       autocomplete="new-password" minlength="6" th:required="${usuario.id == null}">
+                <div class="form-text" th:if="${usuario.id != null}">Deixe em branco para manter a senha atual.</div>
+            </div>
+
+            <div class="col-12 mt-4">
+                <h2 class="h4 border-bottom pb-2">Endereço</h2>
+            </div>
+
+            <div class="col-md-8">
+                <label for="logradouro" class="form-label">Logradouro</label>
+                <input type="text" id="logradouro" class="form-control" th:field="*{endereco.logradouro}"
+                       autocomplete="address-line1" maxlength="160">
+            </div>
+
+            <div class="col-md-4">
+                <label for="numero" class="form-label">Número</label>
+                <input type="text" id="numero" class="form-control" th:field="*{endereco.numero}"
+                       maxlength="20">
+            </div>
+
+            <div class="col-md-6">
+                <label for="bairro" class="form-label">Bairro</label>
+                <input type="text" id="bairro" class="form-control" th:field="*{endereco.bairro}" maxlength="100">
+            </div>
+
+            <div class="col-md-6">
+                <label for="cidade" class="form-label">Cidade</label>
+                <input type="text" id="cidade" class="form-control" th:field="*{endereco.cidade}"
+                       autocomplete="address-level2" maxlength="100">
+            </div>
+
+            <div class="col-md-4">
+                <label for="cep" class="form-label">CEP</label>
+                <input type="text" id="cep" class="form-control" th:field="*{endereco.cep}"
+                       autocomplete="postal-code" inputmode="numeric" maxlength="9">
+            </div>
+
+            <div class="col-md-8">
+                <label for="complemento" class="form-label">Complemento</label>
+                <input type="text" id="complemento" class="form-control" th:field="*{endereco.complemento}"
+                       autocomplete="address-line2" maxlength="120">
+            </div>
+
+            <div class="col-12 d-flex flex-column flex-sm-row gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">Salvar usuário</button>
+                <a th:href="@{/usuariosadmin}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<footer class="mt-auto" th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
