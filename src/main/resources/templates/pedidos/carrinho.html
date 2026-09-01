@@ -36,6 +36,7 @@
 
                     <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-end gap-2">
                         <form th:action="@{/carrinho/atualizar}" method="post" class="d-flex align-items-end gap-2">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <input type="hidden" name="produtoId" th:value="${entry.key.id}">
                             <div>
                                 <label class="form-label small" th:for="'quantidade-' + ${entry.key.id}">Quantidade</label>
@@ -45,6 +46,7 @@
                             <button type="submit" class="btn btn-outline-primary">Atualizar</button>
                         </form>
                         <form th:action="@{/carrinho/remover}" method="post" class="m-0">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <input type="hidden" name="produtoId" th:value="${entry.key.id}">
                             <button type="submit" class="btn btn-outline-danger w-100">Remover</button>
                         </form>
@@ -64,6 +66,7 @@
                 <h2 id="titulo-resumo" class="h5 fw-bold mb-4">Resumo do pedido</h2>
 
                 <form th:action="@{/carrinho/finalizar}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <div class="mb-4">
                         <label for="cep" class="form-label">CEP de entrega</label>
                         <input type="text" id="cep" name="cep" class="form-control"

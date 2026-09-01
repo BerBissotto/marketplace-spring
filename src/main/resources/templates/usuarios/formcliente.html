@@ -17,6 +17,7 @@
 
         <form th:action="@{/usuarioscliente/salvar}" th:object="${usuario}" method="post"
               class="row g-3" id="formCadastro">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <input type="hidden" th:field="*{id}">
             <input type="hidden" th:field="*{endereco.id}">
 

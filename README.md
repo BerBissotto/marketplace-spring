@@ -54,7 +54,7 @@ Aplicação web de marketplace construída com Spring Boot, Thymeleaf e PostgreS
 
 ### Interface
 
-- Layout responsivo com Bootstrap/Bootswatch.
+- Layout responsivo com Bootstrap.
 - Templates HTML semânticos e componentes reutilizáveis com Thymeleaf.
 - Skeletons de carregamento, lazy loading de imagens e barra de progresso.
 - Animações de entrada, saída e feedback de formulários.
@@ -70,7 +70,7 @@ Aplicação web de marketplace construída com Spring Boot, Thymeleaf e PostgreS
 | Persistência | Spring Data JPA / Hibernate |
 | Segurança | Spring Security 6 e BCrypt |
 | Templates | Thymeleaf e Thymeleaf Extras Spring Security |
-| Interface | Bootstrap/Bootswatch 5.3.3, CSS e JavaScript |
+| Interface | Bootstrap 5.3.3, CSS e JavaScript |
 | Banco de dados | PostgreSQL |
 | Build | Maven 3.9.9 via Maven Wrapper |
 | Produtividade | Lombok |
@@ -128,15 +128,31 @@ CREATE DATABASE postgres1;
 
 ### 2. Configure a conexão
 
-Edite `src/main/resources/application.properties` e informe as credenciais do seu ambiente:
+O arquivo `src/main/resources/application.properties` lê as credenciais de variáveis de ambiente:
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/postgres1
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
+spring.datasource.url=${DB_URL:jdbc:postgresql://localhost:5432/postgres1}
+spring.datasource.username=${DB_USERNAME:postgres}
+spring.datasource.password=${DB_PASSWORD:}
 ```
 
-Não envie credenciais reais para o controle de versão. Para produção, prefira variáveis de ambiente ou um gerenciador de segredos.
+Defina `DB_URL`, `DB_USERNAME` e `DB_PASSWORD` no seu ambiente antes de iniciar a aplicação. Não envie credenciais reais para o controle de versão. Em produção, prefira um gerenciador de segredos.
+
+Linux ou macOS:
+
+```bash
+export DB_URL="jdbc:postgresql://localhost:5432/postgres1"
+export DB_USERNAME="postgres"
+export DB_PASSWORD="sua_senha"
+```
+
+Windows (PowerShell):
+
+```powershell
+$env:DB_URL="jdbc:postgresql://localhost:5432/postgres1"
+$env:DB_USERNAME="postgres"
+$env:DB_PASSWORD="sua_senha"
+```
 
 O Hibernate está configurado com `spring.jpa.hibernate.ddl-auto=update`, portanto as tabelas são criadas ou atualizadas quando a aplicação inicia. Esse comportamento é conveniente para desenvolvimento; em produção, use migrações versionadas, como Flyway ou Liquibase.
 
@@ -176,7 +192,7 @@ WHERE email = 'seu-email@exemplo.com';
 
 3. Saia da aplicação, entre novamente e acesse `/admin`.
 
-Antes de publicar o sistema, revise `SecurityConfig` e garanta que todas as rotas administrativas de produtos, usuários, pedidos e pagamentos exijam explicitamente o perfil `ADMIN`.
+As rotas administrativas de produtos, usuários, pedidos e pagamentos exigem explicitamente o perfil `ADMIN` em `SecurityConfig`.
 
 ## Testes e build
 
@@ -241,7 +257,9 @@ src/
 - Se ocorrer `TypeTag :: UNKNOWN`, confira se a IDE está usando o JDK 21, reimporte o projeto Maven e habilite o processamento de anotações do Lombok.
 - As imagens ficam no próprio banco. Para catálogos grandes, considere migrar os arquivos para um armazenamento de objetos e manter apenas as URLs no PostgreSQL.
 - O cache HTTP das imagens é configurado para 30 dias.
-- O tema Bootstrap é carregado por CDN; a primeira renderização depende de acesso à internet.
+- O Bootstrap é carregado por CDN com verificação de integridade SRI; a primeira renderização depende de acesso à internet.
+- Os formulários POST incluem tokens CSRF e a proteção permanece habilitada no Spring Security.
+- Credenciais locais devem ser fornecidas por variáveis de ambiente; arquivos `.env` e `application-local.properties` são ignorados pelo Git.
 - O projeto ainda não possui uma licença definida. Inclua um arquivo `LICENSE` antes de distribuí-lo publicamente.
 
 ---
