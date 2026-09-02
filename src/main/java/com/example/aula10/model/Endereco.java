@@ -2,17 +2,36 @@ package com.example.aula10.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "Informe o logradouro.")
+    @Size(max = 160, message = "O logradouro deve ter no máximo 160 caracteres.")
     private String logradouro;
+
+    @NotBlank(message = "Informe o número.")
+    @Size(max = 20, message = "O número deve ter no máximo 20 caracteres.")
     private String numero;
+
+    @NotBlank(message = "Informe o bairro.")
+    @Size(max = 100, message = "O bairro deve ter no máximo 100 caracteres.")
     private String bairro;
+
+    @NotBlank(message = "Informe a cidade.")
+    @Size(max = 100, message = "A cidade deve ter no máximo 100 caracteres.")
     private String cidade;
+
+    @NotBlank(message = "Informe o CEP.")
+    @Pattern(regexp = "^\\d{5}-?\\d{3}$", message = "Informe um CEP válido.")
     private String cep;
+
+    @Size(max = 120, message = "O complemento deve ter no máximo 120 caracteres.")
     private String complemento;
 
     @OneToOne
@@ -22,16 +41,8 @@ public class Endereco {
 
     @Override
     public String toString() {
-        return "Endereco{" +
-                "id=" + id +
-                ", logradouro='" + logradouro + '\'' +
-                ", numero='" + numero + '\'' +
-                ", bairro='" + bairro + '\'' +
-                ", cidade='" + cidade + '\'' +
-                ", cep='" + cep + '\'' +
-                ", complemento='" + complemento + '\'' +
-                ", usuario=" + usuario +
-                '}';
+        return "Endereco{id=" + id + ", usuarioId="
+                + (usuario != null ? usuario.getId() : null) + '}';
     }
 
     public Long getId() {

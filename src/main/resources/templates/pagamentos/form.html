@@ -30,8 +30,9 @@
 
             <div class="col-md-4">
                 <label for="valor" class="form-label">Valor (R$)</label>
-                <input type="number" id="valor" step="0.01" min="0.01"
-                       th:field="*{valor}" class="form-control" required>
+                <input type="number" id="valor" step="0.01" min="0"
+                       th:field="*{valor}" class="form-control" readonly>
+                <div class="form-text">O valor é recalculado a partir do pedido no servidor.</div>
             </div>
 
             <div class="col-md-4">

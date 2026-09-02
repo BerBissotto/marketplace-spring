@@ -28,6 +28,12 @@ public class UsuarioService {
     }
 
     public Usuario salvar(Usuario usuario) {
+        if (usuario.getEmail() == null || usuario.getRole() == null) {
+            throw new IllegalArgumentException("E-mail e perfil são obrigatórios.");
+        }
+        usuario.setEmail(usuario.getEmail().trim().toLowerCase());
+        usuario.setRole(usuario.getRole().trim().toLowerCase());
+
         if (usuario.getEndereco() != null) {
             usuario.getEndereco().setUsuario(usuario);
         }
@@ -50,7 +56,10 @@ public class UsuarioService {
             usuario.setSenha(atual.getSenha());
         } else if (usuario.getSenha() == null || usuario.getSenha().isBlank()) {
             throw new IllegalArgumentException("A senha é obrigatória para novos usuários.");
-        } else if (!usuario.getSenha().startsWith("$2a$")) {
+        } else {
+            if (usuario.getSenha().length() < 8 || usuario.getSenha().length() > 72) {
+                throw new IllegalArgumentException("A senha deve ter entre 8 e 72 caracteres.");
+            }
             usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         }
 

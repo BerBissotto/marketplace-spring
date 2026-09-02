@@ -1,6 +1,8 @@
 package com.example.aula10.config;
 
 import com.example.aula10.service.CustomUserDetailsService;
+import com.example.aula10.security.LoginFailureHandler;
+import com.example.aula10.security.LoginRateLimitFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.*;
@@ -9,6 +11,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
 @Configuration
 public class SecurityConfig {
@@ -20,6 +24,12 @@ public class SecurityConfig {
     @Autowired
     @Lazy
     private LoginSuccessHandler loginSuccessHandler;
+
+    @Autowired
+    private LoginFailureHandler loginFailureHandler;
+
+    @Autowired
+    private LoginRateLimitFilter loginRateLimitFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -53,13 +63,37 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)
                         .successHandler(loginSuccessHandler)
+                        .failureHandler(loginFailureHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
+                )
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+                                "default-src 'self'; " +
+                                "script-src 'self' https://cdn.jsdelivr.net; " +
+                                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
+                                "img-src 'self' data:; font-src 'self' data:; " +
+                                "connect-src 'self'; object-src 'none'; base-uri 'self'; " +
+                                "form-action 'self'; frame-ancestors 'none'"
+                        ))
+                        .referrerPolicy(referrer -> referrer.policy(
+                                ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                        .permissionsPolicy(permissions -> permissions.policy(
+                                "camera=(), microphone=(), geolocation=(), payment=()"))
+                        .frameOptions(frame -> frame.deny())
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000))
                 );
+
+        http.addFilterBefore(loginRateLimitFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

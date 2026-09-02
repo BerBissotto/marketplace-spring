@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 @Controller
 public class PedidoClienteController {
 
+    private static final Set<String> FRETES_PERMITIDOS = Set.of("economico", "padrao", "expresso");
+    private static final Set<String> EMBALAGENS_PERMITIDAS = Set.of("semembalagem", "basica", "presente", "comemorativa");
+
     @Autowired
     private ProdutoService produtoService;
 
@@ -66,6 +69,14 @@ public class PedidoClienteController {
             pedido.setProdutos(new ArrayList<>());
         }
 
+        long quantidadeNoCarrinho = pedido.getProdutos().stream()
+                .filter(item -> Objects.equals(item.getId(), produtoId))
+                .count();
+        if (quantidadeNoCarrinho >= produto.getQuantidade()) {
+            redirectAttributes.addFlashAttribute("erro", "Não há mais unidades disponíveis deste produto.");
+            return "redirect:/produtos";
+        }
+
         pedido.getProdutos().add(produto);
         pedido.setValorTotal(pedido.getProdutos().stream().mapToDouble(Produto::getPreco).sum());
 
@@ -105,8 +116,12 @@ public class PedidoClienteController {
 
     @PostMapping("/carrinho/atualizar")
     public String atualizarQuantidade(@RequestParam("produtoId") Long produtoId,
-                                      @RequestParam("quantidade") int quantidade) {
-        if (quantidade <= 0) return "redirect:/pedidos";
+                                      @RequestParam("quantidade") int quantidade,
+                                      RedirectAttributes redirectAttributes) {
+        if (quantidade <= 0) {
+            redirectAttributes.addFlashAttribute("erro", "A quantidade deve ser maior que zero.");
+            return "redirect:/pedidos";
+        }
 
         Usuario usuario = getUsuarioLogado();
         Pedido pedido = getPedidoPendenteOuNovo(usuario);
@@ -115,6 +130,10 @@ public class PedidoClienteController {
 
         Produto produto = produtoService.buscarPorId(produtoId).orElse(null);
         if (produto != null) {
+            if (quantidade > produto.getQuantidade()) {
+                redirectAttributes.addFlashAttribute("erro", "Quantidade solicitada maior que o estoque disponível.");
+                return "redirect:/pedidos";
+            }
             for (int i = 0; i < quantidade; i++) {
                 pedido.getProdutos().add(produto);
             }
@@ -136,6 +155,13 @@ public class PedidoClienteController {
 
         Usuario usuario = getUsuarioLogado();
         Pedido pedido = getPedidoPendenteOuNovo(usuario);
+
+        tipoFrete = tipoFrete == null ? "" : tipoFrete.trim().toLowerCase(Locale.ROOT);
+        tipoEmbalagem = tipoEmbalagem == null ? "" : tipoEmbalagem.trim().toLowerCase(Locale.ROOT);
+        if (!FRETES_PERMITIDOS.contains(tipoFrete) || !EMBALAGENS_PERMITIDAS.contains(tipoEmbalagem)) {
+            redirectAttributes.addFlashAttribute("erro", "Frete ou embalagem inválidos.");
+            return "redirect:/pedidos";
+        }
 
         if (pedido.getProdutos() == null || pedido.getProdutos().isEmpty()) {
             redirectAttributes.addFlashAttribute("erro", "Seu carrinho está vazio!");

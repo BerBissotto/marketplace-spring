@@ -14,8 +14,6 @@
 
     <form th:action="@{/pagamentos/finalizar}" method="post" class="row g-4 align-items-start">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-        <input type="hidden" name="pedidoId" th:value="${pedido.id}">
-
         <section class="col-lg-8" aria-labelledby="titulo-formas-pagamento">
             <fieldset class="checkout-card p-4">
                 <legend id="titulo-formas-pagamento" class="h5 fw-bold mb-4">Forma de pagamento</legend>

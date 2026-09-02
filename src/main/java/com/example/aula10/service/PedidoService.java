@@ -1,6 +1,7 @@
 package com.example.aula10.service;
 
 import com.example.aula10.model.Pedido;
+import com.example.aula10.model.Produto;
 import com.example.aula10.model.Usuario;
 import com.example.aula10.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,28 @@ public class PedidoService {
         return pedidoRepository.findById(id);
     }
 
+    public Optional<Pedido> buscarPorIdEUsuario(Long id, Usuario usuario) {
+        return pedidoRepository.findByIdAndUsuario(id, usuario);
+    }
+
     public Pedido salvar(Pedido pedido) {
         pedido.setValorTotal(pedido.calcularValorTotalDecorado());
         return pedidoRepository.save(pedido);
+    }
+
+    public Pedido salvarAdministrativo(Pedido dados, List<Produto> produtos, Usuario usuario) {
+        Pedido pedido = dados.getId() == null
+                ? new Pedido()
+                : pedidoRepository.findById(dados.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado."));
+
+        pedido.setDataPedido(dados.getDataPedido());
+        pedido.setProdutos(produtos);
+        pedido.setUsuario(usuario);
+        pedido.setTipoFrete(dados.getTipoFrete());
+        pedido.setTipoEmbalagem(dados.getTipoEmbalagem());
+        pedido.setPercentualDesconto(dados.getPercentualDesconto());
+        return salvar(pedido);
     }
 
     public void deletar(Long id) {

@@ -3,9 +3,12 @@ package com.example.aula10.controller;
 import com.example.aula10.model.Endereco;
 import com.example.aula10.model.Usuario;
 import com.example.aula10.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -14,6 +17,15 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @InitBinder("usuario")
+    public void restringirCamposUsuario(WebDataBinder binder) {
+        binder.setAllowedFields(
+                "id", "nome", "email", "senha", "telefone", "cpf", "role",
+                "endereco.id", "endereco.logradouro", "endereco.numero", "endereco.bairro",
+                "endereco.cidade", "endereco.cep", "endereco.complemento"
+        );
+    }
 
     @GetMapping
     public String listarUsuarios(Model model) {
@@ -30,7 +42,10 @@ public class UsuarioController {
     }
 
     @PostMapping("/salvar")
-    public String salvarUsuario(@ModelAttribute Usuario usuario, Model model) {
+    public String salvarUsuario(@Valid @ModelAttribute Usuario usuario, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "usuarios/form";
+        }
         try {
             if (usuario.getEndereco() != null) {
                 usuario.getEndereco().setUsuario(usuario);
