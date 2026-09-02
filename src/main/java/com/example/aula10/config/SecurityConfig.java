@@ -85,12 +85,12 @@ public class SecurityConfig {
                         ))
                         .referrerPolicy(referrer -> referrer.policy(
                                 ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-                        .permissionsPolicy(permissions -> permissions.policy(
-                                "camera=(), microphone=(), geolocation=(), payment=()"))
                         .frameOptions(frame -> frame.deny())
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .includeSubDomains(true)
                                 .maxAgeInSeconds(31536000))
+                        .permissionsPolicy(permissions -> permissions.policy(
+                                "camera=(), microphone=(), geolocation=(), payment=()"))
                 );
 
         http.addFilterBefore(loginRateLimitFilter, UsernamePasswordAuthenticationFilter.class);
