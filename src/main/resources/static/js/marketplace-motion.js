@@ -252,7 +252,7 @@
         loadingButtons.set(button, button.innerHTML);
         button.textContent = "";
         button.appendChild(createLoadingIndicator());
-        button.appendChild(document.createTextNode("Processando…"));
+        button.appendChild(document.createTextNode(" "));
         button.classList.add("is-loading");
         button.setAttribute("aria-disabled", "true");
     }

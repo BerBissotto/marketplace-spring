@@ -2,7 +2,7 @@
 
 ![Versão](https://img.shields.io/badge/vers%C3%A3o-1.2.0--SNAPSHOT-0d6efd)
 ![Java](https://img.shields.io/badge/Java-21-e76f00)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.4-6db33f)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-6db33f)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-compat%C3%ADvel-4169e1)
 
 Aplicação web de marketplace construída com Spring Boot, Thymeleaf e PostgreSQL. O sistema reúne uma vitrine pública de produtos, cadastro e autenticação de clientes, carrinho, cálculo de frete, embalagem e desconto, checkout com métodos de pagamento simulados e uma área de administração.
@@ -62,19 +62,19 @@ Aplicação web de marketplace construída com Spring Boot, Thymeleaf e PostgreS
 
 ## Tecnologias
 
-| Camada | Tecnologia |
-| --- | --- |
-| Linguagem | Java 21 |
-| Framework | Spring Boot 3.4.4 |
-| Web | Spring MVC |
-| Persistência | Spring Data JPA / Hibernate |
-| Segurança | Spring Security 6 e BCrypt |
+| Camada | Tecnologia                                   |
+| --- |----------------------------------------------|
+| Linguagem | Java 21                                      |
+| Framework | Spring Boot 4.1.1                            |
+| Web | Spring MVC                                   |
+| Persistência | Spring Data JPA / Hibernate                  |
+| Segurança | Spring Security 6 e BCrypt                   |
 | Templates | Thymeleaf e Thymeleaf Extras Spring Security |
-| Interface | Bootstrap 5.3.3, CSS e JavaScript |
-| Banco de dados | PostgreSQL |
-| Build | Maven 3.9.9 via Maven Wrapper |
-| Produtividade | Lombok |
-| Testes | JUnit 5 e Spring Boot Test |
+| Interface | Bootstrap 5.3.3, CSS e JavaScript            |
+| Banco de dados | PostgreSQL                                   |
+| Build | Maven 3.9.9 via Maven Wrapper                |
+| Produtividade | Lombok                                       |
+| Testes | JUnit 5 e Spring Boot Test                   |
 
 ## Arquitetura e padrões
 
