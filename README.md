@@ -1,13 +1,13 @@
 # Marketplace
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-1.2.0--SNAPSHOT-0d6efd)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-1.3.0--SNAPSHOT-0d6efd)
 ![Java](https://img.shields.io/badge/Java-21-e76f00)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-6db33f)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-compat%C3%ADvel-4169e1)
 
 Aplicação web de marketplace construída com Spring Boot, Thymeleaf e PostgreSQL. O sistema reúne uma vitrine pública de produtos, cadastro e autenticação de clientes, carrinho, cálculo de frete, embalagem e desconto, checkout com métodos de pagamento simulados e uma área de administração.
 
-> Versão atual: **1.2.0-SNAPSHOT**. O projeto usa **Java 21**, conforme definido no `pom.xml`.
+> Versão atual: **1.3.0-SNAPSHOT**. O projeto usa **Java 21**, conforme definido no `pom.xml`.
 
 ## Sumário
 
@@ -68,7 +68,7 @@ Aplicação web de marketplace construída com Spring Boot, Thymeleaf e PostgreS
 | Framework | Spring Boot 4.1.1                            |
 | Web | Spring MVC                                   |
 | Persistência | Spring Data JPA / Hibernate                  |
-| Segurança | Spring Security 6 e BCrypt                   |
+| Segurança | Spring Security 7 e BCrypt                   |
 | Templates | Thymeleaf e Thymeleaf Extras Spring Security |
 | Interface | Bootstrap 5.3.3, CSS e JavaScript            |
 | Banco de dados | PostgreSQL                                   |
@@ -226,7 +226,7 @@ Para gerar o pacote executável:
 
 ```bash
 ./mvnw clean package
-java -jar target/SpringAula2-1.2.0-SNAPSHOT.jar
+java -jar target/SpringAula2-1.3.0-SNAPSHOT.jar
 ```
 
 ## Estrutura do projeto
