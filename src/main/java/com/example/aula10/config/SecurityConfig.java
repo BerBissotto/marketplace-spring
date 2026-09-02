@@ -5,8 +5,8 @@ import com.example.aula10.security.LoginFailureHandler;
 import com.example.aula10.security.LoginRateLimitFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
-import org.springframework.security.authentication.*;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,10 +16,6 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 
 @Configuration
 public class SecurityConfig {
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
 
     @Autowired
     @Lazy
@@ -37,17 +33,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder())
-                .and()
-                .build();
+    public AuthenticationProvider authenticationProvider(
+            CustomUserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            AuthenticationProvider authenticationProvider) throws Exception {
         http
+                .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/imagens/**", "/produtos/**", "/imagem/**", "/css/**", "/js/**", "/login",  "/formcliente", "/usuarioscliente/salvar", "/images/**").permitAll()
                         .requestMatchers(
