@@ -6,6 +6,7 @@ import com.example.aula10.service.PagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,11 @@ public class PagamentoController {
 
     @Autowired
     private PagamentoService pagamentoService;
+
+    @InitBinder("pagamento")
+    public void restringirCamposPagamento(WebDataBinder binder) {
+        binder.setAllowedFields("id", "metodoPagamento", "pedido.id");
+    }
 
     @GetMapping("/form")
     public String form(@RequestParam(required = false) Long id, Model model) {

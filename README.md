@@ -138,6 +138,16 @@ spring.datasource.password=${DB_PASSWORD:}
 
 Defina `DB_URL`, `DB_USERNAME` e `DB_PASSWORD` no seu ambiente antes de iniciar a aplicação. Não envie credenciais reais para o controle de versão. Em produção, prefira um gerenciador de segredos.
 
+Os controles de sessão e tentativas de login também podem ser ajustados por ambiente:
+
+```properties
+SESSION_COOKIE_SECURE=false
+LOGIN_MAX_ATTEMPTS=5
+LOGIN_LOCK_DURATION=15m
+```
+
+Mantenha `SESSION_COOKIE_SECURE=false` somente durante o desenvolvimento em HTTP local. Em produção com HTTPS, defina o valor como `true`. O limitador de login é mantido em memória; se a aplicação executar em mais de uma instância, substitua o armazenamento por Redis ou outro serviço compartilhado.
+
 Linux ou macOS:
 
 ```bash
@@ -193,6 +203,8 @@ WHERE email = 'seu-email@exemplo.com';
 3. Saia da aplicação, entre novamente e acesse `/admin`.
 
 As rotas administrativas de produtos, usuários, pedidos e pagamentos exigem explicitamente o perfil `ADMIN` em `SecurityConfig`.
+
+O checkout não aceita um identificador de pedido escolhido pelo navegador. O servidor obtém o pedido pendente a partir do usuário autenticado, revalida o estoque e finaliza pagamento, estoque e pedido na mesma transação. As respostas administrativas em JSON utilizam DTOs e não serializam as entidades completas.
 
 ## Testes e build
 
@@ -260,6 +272,9 @@ src/
 - O Bootstrap é carregado por CDN com verificação de integridade SRI; a primeira renderização depende de acesso à internet.
 - Os formulários POST incluem tokens CSRF e a proteção permanece habilitada no Spring Security.
 - Credenciais locais devem ser fornecidas por variáveis de ambiente; arquivos `.env` e `application-local.properties` são ignorados pelo Git.
+- Os formulários possuem validação no servidor; as validações do navegador são apenas uma camada de usabilidade.
+- A aplicação envia Content Security Policy, Referrer Policy, Permissions Policy, proteção contra iframes e HSTS em respostas HTTPS.
+- Dados pessoais não são incluídos nos métodos `toString()` de usuário e endereço, reduzindo a exposição acidental em logs.
 - O projeto ainda não possui uma licença definida. Inclua um arquivo `LICENSE` antes de distribuí-lo publicamente.
 
 ---

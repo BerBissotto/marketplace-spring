@@ -9,13 +9,25 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.WebDataBinder;
 
 @Controller
 public class UsuarioClienteController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @InitBinder("usuario")
+    public void restringirCamposCadastro(WebDataBinder binder) {
+        binder.setAllowedFields(
+                "nome", "email", "senha", "telefone", "cpf",
+                "endereco.logradouro", "endereco.numero", "endereco.bairro",
+                "endereco.cidade", "endereco.cep", "endereco.complemento"
+        );
+    }
 
     // Exibir formulário
     @GetMapping("/formcliente")
@@ -30,7 +42,7 @@ public class UsuarioClienteController {
     @PostMapping("/usuarioscliente/salvar")
     public String salvarUsuarioCliente(@Valid Usuario usuario,
                                        BindingResult result,
-                                       String confirmarSenha,
+                                       @RequestParam String confirmarSenha,
                                        Model model) {
 
         // Confirmação da senha
@@ -48,7 +60,13 @@ public class UsuarioClienteController {
         }
 
         // Salvar no banco
-        usuarioService.salvar(usuario);
+        try {
+            usuarioService.salvar(usuario);
+        } catch (IllegalArgumentException exception) {
+            result.reject("cadastro.invalido", exception.getMessage());
+            model.addAttribute("erro", exception.getMessage());
+            return "usuarios/formcliente";
+        }
 
         // Redireciona para login ou outra página
         return "redirect:/login?cadastroSucesso";

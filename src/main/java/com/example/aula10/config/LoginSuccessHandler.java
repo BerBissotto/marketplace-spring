@@ -2,6 +2,7 @@ package com.example.aula10.config;
 
 import com.example.aula10.model.Pedido;
 import com.example.aula10.model.Usuario;
+import com.example.aula10.security.LoginAttemptService;
 import com.example.aula10.service.PedidoService;
 import com.example.aula10.service.UsuarioService;
 import jakarta.servlet.ServletException;
@@ -24,10 +25,14 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
     @Autowired
     private PedidoService pedidoService;
 
+    @Autowired
+    private LoginAttemptService loginAttemptService;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        loginAttemptService.recordSuccess(userDetails.getUsername(), request.getRemoteAddr());
         Usuario usuario = usuarioService.buscarPorEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
